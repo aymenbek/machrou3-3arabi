@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار النحو والبلاغة المتقدم والدقيق</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .arabic-text {
+            font-family: 'Amiri', serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-3xl w-full bg-slate-800/90 backdrop-blur border border-slate-700 rounded-2xl shadow-2xl overflow-hidden p-6 md:p-8">
+        
+        <!-- Header -->
+        <header class="text-center border-b border-slate-700 pb-6 mb-6">
+            <span class="bg-emerald-500/10 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/20">تحدي الخبراء في النحو العربي</span>
+            <h1 class="text-2xl md:text-3xl font-bold mt-3 text-slate-100">اختبار الدقائق والمسائل النحوية المتقدمة</h1>
+            <p class="text-slate-400 text-sm mt-1">يغطي: المقصور، الممدود، الجمل الاعتراضية، أدوات الربط، والجملة المختزلة</p>
+        </header>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container">
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-700 h-2 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 10%;"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="question-box" class="space-y-6">
+                <div class="flex justify-between items-center text-sm text-slate-400">
+                    <span id="question-counter">السؤال 1 من 10</span>
+                    <span id="question-tag" class="bg-slate-700 px-2.5 py-1 rounded text-xs text-emerald-300">اسم المقصور والممدود</span>
+                </div>
+
+                <h2 id="question-text" class="text-lg md:text-xl font-semibold leading-relaxed text-slate-200 arabic-text">
+                    <!-- Question text dynamically loaded -->
+                </h2>
+
+                <!-- Input area for text answers -->
+                <div class="space-y-3">
+                    <label for="user-answer" class="block text-sm font-medium text-slate-300">اكتب إجابتك التقديرية أو التفصيلية أدناه:</label>
+                    <textarea id="user-answer" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-slate-100 focus:outline-none focus:border-emerald-500 transition" placeholder="اكتب إجابتك هنا بدقة نحوية..."></textarea>
+                </div>
+
+                <!-- Feedback area -->
+                <div id="feedback-box" class="hidden p-4 rounded-xl border text-sm leading-relaxed">
+                    <!-- Feedback loaded here -->
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center pt-4 border-t border-slate-700">
+                    <button id="prev-btn" onclick="prevQuestion()" class="px-5 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>السابق</button>
+                    <button id="submit-btn" onclick="checkAnswer()" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition shadow-lg shadow-emerald-600/20">تحقق من الإجابة</button>
+                    <button id="next-btn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition hidden shadow-lg shadow-indigo-600/20">السؤال التالي</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden text-center space-y-6 py-8">
+            <div class="w-20 h-20 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-3xl font-bold">
+                🎓
+            </div>
+            <h2 class="text-2xl font-bold text-slate-100">أتممت الاختبار بنجاح تام!</h2>
+            <p id="score-summary" class="text-slate-300 text-base max-w-md mx-auto"></p>
+            <button onclick="restartQuiz()" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition shadow-lg shadow-emerald-600/20">إعادة الاختبار</button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                tag: "الاسم المقصور والممدود",
+                question: "في قول الشاعر: «وإنّ شفائي عبرةٌ مهراقةٌ ... فهل عند رسمٍ دارسٍ من معوّلِ»، ما الإعراب الدقيق لـ (معوّل) وهل تُعد الكلمة اسماً مقصوراً أو منقوصاً أو ممدوداً؟",
+                modelAnswer: "كلمة (معوّل) ليست اسماً مقصوراً ولا ممدوداً بل هي اسم منقوص حُذفت ياؤه للتنوين (أصله معوّلٌ مجرور بحرف جر زائر 'من')، وإعرابه: اسم مجرور لفظاً مرفوع محلاً لأنه مبتدأ مؤخر (أو خبر لمبتدأ محذوف تقديره هو معوّل)."
+            },
+            {
+                id: 2,
+                tag: "تثنية الممدود",
+                question: "عند تثنية كلمة (صحراء) وكلمة (سماء) في قولنا: «هذه صحراءُ واسعةٌ تحت سماءٍ صافيةٍ»، كيف تُكتبان بعد التثنية ولماذا؟",
+                modelAnswer: "صحراء: صحراوان (لأن همزتها مزيدة للتأنيث فتقلب واواً وجوباً). سماء: سماوان أو سماوات (لأن همزتها منقلبة عن أصل -واو أو ياء- فيجوز إبقاؤها همزة أو قلبها واواً)."
+            },
+            {
+                id: 3,
+                tag: "الجمل الاعتراضية",
+                question: "في قوله تعالى: {وَإِنَّهُ لَقَسَمٌ لَوْ تَعْلَمُونَ عَظِيمٌ}، ما الإعراب الدقيق لجملة الاعتراض (لو تعلمون) وما نوعها البلاغي؟",
+                modelAnswer: "هي جملة اعتراضية توسطت بين الصفة (عظِيم) والموصوف (قَسَم)، لا محل لها من الإعراب، وغرضها البلاغي التنبيه والاحتراس وتفخيم شأن القسم."
+            },
+            {
+                id: 4,
+                tag: "أدوات الربط ومعانيها",
+                question: "ما الدلالة النحوية والبلاغية الدقيقة لأداة الربط (بل) في السياق: «ما أقبل الصباحُ حتى انتفض الحقل حيويةً؛ بل إن النسيم يعزف لحن البدايات»؟",
+                modelAnswer: "(بل) هنا تفيد الإضراب الانتقالي الإدراجي (الترقي)، حيث انتقل المتكلم من وصف حركة الحقل إلى وصف إيقاع النسيم الأعمق والأجمل ترقيةً للمعنى."
+            },
+            {
+                id: 5,
+                tag: "الجملة المختزلة",
+                question: "في تركيب الاستفهام المختزل: «أزيدٌ جاء أم عمرو؟» ثم قولك في الاختزال: «أم عمروٍ؟»، ما الذي طرأ على البنية الإسنادية للجملة المختزلة؟",
+                modelAnswer: "حذف الفعل المسند والفاعل (المسند إليه) اختصاراً لدلالة السياق المتقدم عليه لدفع التكرار والاكتفاء بالمعادل المعنوي المعطوف."
+            },
+            {
+                id: 6,
+                tag: "الفرق بين الاعتراضية والمختزلة",
+                question: "ما الفرق الأسلوبي والنحوي الأساسي بين (الجملة الاعتراضية) و(الجملة المختزلة)؟",
+                modelAnswer: "الجملة الاعتراضية جملة كاملة الأركان توسطت كلاماً لمعنى زائل (كالاستدراك أو الدعاء) ولا تدخل في العمدة الإسنادية، بينما الجملة المختزلة جملة حُذف ركن أساسي منها لدلالة السياق عليها."
+            },
+            {
+                id: 7,
+                tag: "أدوات الربط",
+                question: "في التعبير: «غير أن السكون -على الرغم من هذا الصخب البديع- ظل مهيمناً»، ما وظيفة أداة الربط (غير أن)؟",
+                modelAnswer: "مركب استدراكي يفيد الاستدراك ورفع الوهم أو دفع توهم انقضاء السكون مع وجود الصخب البديع."
+            },
+            {
+                id: 8,
+                tag: "حكم جمع الممدود",
+                question: "ما حكم تثنية وجمع كلمة (صحراء) إذا ثبت أن همزتها للمؤنث الممدود؟",
+                modelAnswer: "تجب قلب همزتها واواً في التثنية والجمع المؤنث السالم (صحراوان / صحراوات)."
+            },
+            {
+                id: 9,
+                tag: "الجمل الاعتراضية البلاغية",
+                question: "أيُّ الأغراض الآتية يُعد من أغراض الجمل الاعتراضية البلاغية الأكثر دقة في التنزيه الإلهي؟",
+                modelAnswer: "التنزيه والتقديس والاحتراس عن إيهام نقص أو تشبيه، مثل جمل التنزيه المعترضة بين صفات الجلال."
+            },
+            {
+                id: 10,
+                tag: "أدوات الربط (إذ)",
+                question: "في قولنا: «إذ لا يعقل أن تتحرك الطبيعة بمعزل عن قانونها»، ما الدلالة النحوية لأداة الربط (إذ) في هذا السياق؟",
+                modelAnswer: "(إذ) هنا حرف أو ظرف يفيد التعليل والسببية، وتأتي بمعنى (لأن أو التعليلية)."
+            }
+        ];
+
+        let currentIdx = 0;
+        const userAnswers = new Array(questions.length).fill("");
+
+        const questionCounter = document.getElementById("question-counter");
+        const questionTag = document.getElementById("question-tag");
+        const questionText = document.getElementById("question-text");
+        const userAnswerInput = document.getElementById("user-answer");
+        const feedbackBox = document.getElementById("feedback-box");
+        const progressBar = document.getElementById("progress-bar");
+        const prevBtn = document.getElementById("prev-btn");
+        const submitBtn = document.getElementById("submit-btn");
+        const nextBtn = document.getElementById("next-btn");
+        const quizContainer = document.getElementById("quiz-container");
+        const resultsScreen = document.getElementById("results-screen");
+        const scoreSummary = document.getElementById("score-summary");
+
+        function loadQuestion() {
+            const q = questions[currentIdx];
+            questionCounter.innerText = `السؤال ${currentIdx + 1} من ${questions.length}`;
+            questionTag.innerText = q.tag;
+            questionText.innerText = q.question;
+            userAnswerInput.value = userAnswers[currentIdx] || "";
+            
+            // Update progress
+            progressBar.style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+            
+            // Buttons state
+            prevBtn.disabled = currentIdx === 0;
+            
+            // Check if already answered
+            if (userAnswers[currentIdx]) {
+                showFeedback(q.modelAnswer);
+            } else {
+                feedbackBox.classList.add("hidden");
+                submitBtn.classList.remove("hidden");
+                nextBtn.classList.add("hidden");
+                userAnswerInput.disabled = false;
+            }
+        }
+
+        function checkAnswer() {
+            const val = userAnswerInput.value.trim();
+            if (!val) {
+                alert("الرجاء كتابة إجابتك قبل التحقق.");
+                return;
+            }
+            userAnswers[currentIdx] = val;
+            showFeedback(questions[currentIdx].modelAnswer);
+        }
+
+        function showFeedback(model) {
+            feedbackBox.innerHTML = `<strong class="block text-emerald-400 mb-1 font-semibold">الإجابة النموذجية والمعيارية:</strong><p class="text-slate-300">${model}</p>`;
+            feedbackBox.className = "p-4 rounded-xl border bg-slate-900/80 border-emerald-500/30 text-sm leading-relaxed block";
+            submitBtn.classList.add("hidden");
+            nextBtn.classList.remove("hidden");
+            userAnswerInput.disabled = true;
+        }
+
+        function nextQuestion() {
+            if (currentIdx < questions.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            quizContainer.classList.add("hidden");
+            resultsScreen.classList.remove("hidden");
+            scoreSummary.innerText = `لقد اجتزت الأسئلة العشرة الصعبة والمتقدمة في قواعد النحو والبلاغة بنجاح. راجع إجاباتك النموذجية في كل سؤال لتثبيت المعرفة الدقيقة.`;
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            userAnswers.fill("");
+            resultsScreen.classList.add("hidden");
+            quizContainer.classList.remove("hidden");
+            loadQuestion();
+        }
+
+        // Initialize first question
+        loadQuestion();
+    </script>
+</body>
+</html>
+```eof
+
+قم بحفظ هذا الملف بصيغة `html` (مثل `advanced_arabic_grammar_quiz.html`) وافتحه في أي متصفح لديك لتبدأ الحل والتمرن بصورة تفاعلية ممتعة. بالتوفيق دائماً!
